@@ -8,7 +8,7 @@ import java.util.Optional;
 public class JDBConnection {
 
     private static final String JDBC_DRIVER = "org.h2.Driver";
-    private static final String DB_PATH = "./Car Sharing/task/src/carsharing/db/";
+    private static final String DB_PATH = "./src/carsharing/db/";
     private static final String DB_URL = "jdbc:h2:%s".formatted(DB_PATH);
     private static final String DEFAULT_DB_FILE_NAME = "carsharing";
     private final String dbFileName;
