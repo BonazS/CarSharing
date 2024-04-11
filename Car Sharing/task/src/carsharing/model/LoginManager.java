@@ -1,17 +1,18 @@
 package carsharing.model;
 
+import carsharing.dao.CompanyDao;
+import carsharing.dao.DbCompanyDao;
+import carsharing.jdbc.connection.JDBConnection;
+
 import java.util.Map;
 import java.util.Scanner;
-import java.util.TreeMap;
 
 public class LoginManager {
 
-    private final Map<Integer, Company> companies;
-    private final Menu menu;
+    private final CompanyDao companyDao;
 
-    public LoginManager(final Menu menu) {
-        this.menu = menu;
-        companies = new TreeMap<>();
+    public LoginManager(final JDBConnection con) {
+        companyDao = new DbCompanyDao(con);
     }
 
     public void loginMenu(final Scanner scanner) {
@@ -24,11 +25,13 @@ public class LoginManager {
                 System.out.println();
                 if (optionMenu == 0) return;
                 else if (optionMenu == 1) {
+                    final Map<Integer, Company> companies = companyDao.selectAllCompanies();
                     if (!companies.isEmpty()) {
                         System.out.println("Company list:");
                         companies.forEach(
                                 (id, company) -> System.out.printf("%d. %s%n", id, company.getName())
                         );
+                        System.out.println();
                     } else {
                         System.out.println("The company list is empty!\n");
                     }
@@ -37,8 +40,7 @@ public class LoginManager {
                     scanner.nextLine();
                     System.out.println("Enter the company name:");
                     if (scanner.hasNextLine()) {
-                        scanner.nextLine();
-                        System.out.println("The company was created!\n");
+                        companyDao.add(new Company(scanner.nextLine()));
                     }
                 }
             }

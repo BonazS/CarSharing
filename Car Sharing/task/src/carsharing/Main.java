@@ -24,18 +24,7 @@ public class Main {
             H2DBConnection = new JDBConnection(Optional.empty());
         }
 
-        Menu menu = new Menu();
+        Menu menu = new Menu(H2DBConnection);
         menu.mainMenu();
-        /*
-        // Stage 1 run configuration
-        try {
-            H2DBConnection.createConnection();
-            DBOperations operation = new DBOperations(H2DBConnection.getConnection());
-            operation.createCompany();
-            H2DBConnection.closeConnection();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-         */
     }
 }
