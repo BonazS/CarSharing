@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface CompanyDao {
 
-    void add(Company company);
+    void add(final Company company);
 
     Map<Integer, Company> selectAllCompanies();
 

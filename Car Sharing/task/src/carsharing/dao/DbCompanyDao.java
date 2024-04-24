@@ -29,7 +29,7 @@ public class DbCompanyDao implements CompanyDao {
     }
 
     @Override
-    public void add(Company company) {
+    public void add(final Company company) {
         System.out.println(
                 dbOperations.insert(INSERT_COMPANY, company) == 1
                 ? "The company was created!\n" : "Company not inserted.\n"
