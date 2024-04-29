@@ -1,6 +1,8 @@
 package carsharing.model;
 
+import carsharing.dao.CarDao;
 import carsharing.dao.CompanyDao;
+import carsharing.dao.DbCarDao;
 import carsharing.dao.DbCompanyDao;
 import carsharing.jdbc.connection.JDBConnection;
 
@@ -11,8 +13,14 @@ public class LoginManager {
 
     private final CompanyDao companyDao;
 
-    public LoginManager(final JDBConnection con) {
+    private final CarDao carDao;
+
+    private final Menu startingMenu;
+
+    public LoginManager(final JDBConnection con, final Menu startingMenu) {
         companyDao = new DbCompanyDao(con);
+        carDao = new DbCarDao(con);
+        this.startingMenu = startingMenu;
     }
 
     public void loginMenu(final Scanner scanner) {
@@ -23,8 +31,10 @@ public class LoginManager {
             if (scanner.hasNextInt()) {
                 int optionMenu = scanner.nextInt();
                 System.out.println();
-                if (optionMenu == 0) return;
-                else if (optionMenu == 1) {
+                if (optionMenu == 0) {
+                    startingMenu.mainMenu();
+                    System.exit(0);
+                } else if (optionMenu == 1) {
                     final Map<Integer, Company> companies = companyDao.selectAllCompanies();
                     if (!companies.isEmpty()) {
                         /* old run configuration
@@ -52,7 +62,7 @@ public class LoginManager {
 
     private void companyListMenu(final Scanner scanner, Map<Integer, Company> companies) {
         while (true) {
-            System.out.println("Choose a company:");
+            System.out.println("Choose the company:");
             companies.forEach(
                     (id, company) -> System.out.printf("%d. %s%n", id, company.getName())
             );
@@ -78,11 +88,27 @@ public class LoginManager {
             if (scanner.hasNextInt()) {
                 int optionMenu = scanner.nextInt();
                 System.out.println();
-                if (optionMenu == 0) return;
-                else if (optionMenu == 1) {
-
+                if (optionMenu == 0) {
+                    loginMenu(scanner);
+                    return;
+                } else if (optionMenu == 1) {
+                    final Map<Integer, Car> companyCars = carDao.selectAllCars();
+                    if (!companyCars.isEmpty()) {
+                        System.out.println("Car list:");
+                        companyCars.forEach(
+                                (id, car) -> System.out.printf("%d. %s%n", id, car.getName())
+                        );
+                        System.out.println();
+                    } else {
+                        System.out.println("The car list is empty!\n");
+                    }
                 } else if (optionMenu == 2) {
-
+                    // It's necessary because of the character of new line remained in the scanner after nextInt call.
+                    scanner.nextLine();
+                    System.out.println("Enter the car name:");
+                    if (scanner.hasNextLine()) {
+                        carDao.add(new Car(scanner.nextLine()));
+                    }
                 }
             }
         }

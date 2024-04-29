@@ -23,7 +23,7 @@ public class Menu {
                 int optionMenu = input.nextInt();
                 if (optionMenu == 1) {
                     System.out.println();
-                    LoginManager loginManager = new LoginManager(dbConnection);
+                    LoginManager loginManager = new LoginManager(dbConnection, this);
                     loginManager.loginMenu(input);
                 } else if (optionMenu == 0) {
                     dbConnection.closeConnection();
