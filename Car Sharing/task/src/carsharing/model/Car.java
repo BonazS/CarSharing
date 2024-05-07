@@ -8,10 +8,9 @@ public class Car {
 
     private int companyId;
 
-    private String company;
-
-    public Car(final String name) {
+    public Car(final String name, final int companyId) {
         this.name = name;
+        this.companyId = companyId;
     }
 
     public int getId() {
@@ -38,11 +37,4 @@ public class Car {
         this.companyId = companyId;
     }
 
-    public String getCompany() {
-        return company;
-    }
-
-    public void setCompany(String company) {
-        this.company = company;
-    }
 }

@@ -1,6 +1,7 @@
 package carsharing.jdbc.crud;
 
 import carsharing.jdbc.connection.JDBConnection;
+import carsharing.model.Car;
 import carsharing.model.Company;
 
 import java.sql.PreparedStatement;
@@ -36,6 +37,17 @@ public class DBOperations {
     public int insert(final String query, final Company company) {
         try (PreparedStatement stmt = con.getConnection().prepareStatement(query)) {
             stmt.setString(1, company.getName());
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Insert Statement not created.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int insert(final String query, final Car car) {
+        try (PreparedStatement stmt = con.getConnection().prepareStatement(query)) {
+            stmt.setString(1, car.getName());
+            stmt.setInt(2, car.getCompanyId());
             return stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Insert Statement not created.");

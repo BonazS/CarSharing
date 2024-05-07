@@ -37,12 +37,6 @@ public class LoginManager {
                 } else if (optionMenu == 1) {
                     final Map<Integer, Company> companies = companyDao.selectAllCompanies();
                     if (!companies.isEmpty()) {
-                        /* old run configuration
-                        System.out.println("Company list:");
-                        companies.forEach(
-                                (id, company) -> System.out.printf("%d. %s%n", id, company.getName())
-                        );
-                         */
                         companyListMenu(scanner, companies);
                         System.out.println();
                     } else {
@@ -92,12 +86,13 @@ public class LoginManager {
                     loginMenu(scanner);
                     return;
                 } else if (optionMenu == 1) {
-                    final Map<Integer, Car> companyCars = carDao.selectAllCars();
+                    final Map<Integer, Car> companyCars = carDao.selectCarsByCompanyId(company.getId());
                     if (!companyCars.isEmpty()) {
+                        int indexList = 0;
                         System.out.println("Car list:");
-                        companyCars.forEach(
-                                (id, car) -> System.out.printf("%d. %s%n", id, car.getName())
-                        );
+                        for (Map.Entry<Integer, Car> car : companyCars.entrySet()) {
+                            System.out.printf("%d. %s%n", ++indexList, car.getValue().getName());
+                        }
                         System.out.println();
                     } else {
                         System.out.println("The car list is empty!\n");
@@ -107,7 +102,7 @@ public class LoginManager {
                     scanner.nextLine();
                     System.out.println("Enter the car name:");
                     if (scanner.hasNextLine()) {
-                        carDao.add(new Car(scanner.nextLine()));
+                        carDao.add(new Car(scanner.nextLine(), company.getId()));
                     }
                 }
             }

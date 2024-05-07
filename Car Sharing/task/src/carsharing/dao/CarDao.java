@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface CarDao {
 
-    void add(Car car);
+    void add(final Car car);
 
-    Map<Integer, Car> selectAllCars();
+    Map<Integer, Car> selectCarsByCompanyId(final int companyId);
 }
