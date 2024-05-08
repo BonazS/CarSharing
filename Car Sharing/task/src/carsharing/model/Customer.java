@@ -6,7 +6,7 @@ public class Customer {
 
     private String name;
 
-    private int rentedCarId;
+    private Integer rentedCarId;
 
     public Customer(final String name) {
         this.name = name;
@@ -20,11 +20,11 @@ public class Customer {
         this.id = id;
     }
 
-    public int getRentedCarId() {
+    public Integer getRentedCarId() {
         return rentedCarId;
     }
 
-    public void setRentedCarId(final int rentedCarId) {
+    public void setRentedCarId(final Integer rentedCarId) {
         this.rentedCarId = rentedCarId;
     }
 

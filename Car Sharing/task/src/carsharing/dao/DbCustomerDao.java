@@ -38,14 +38,21 @@ public class DbCustomerDao implements CustomerDao {
 
     @Override
     public Map<Integer, Customer> selectAllCustomers() {
-        // return Map.of();
         Map<Integer, Customer> customers = new TreeMap<>();
         try (ResultSet customersDBData = dbOperations.select(SELECT_ALL_CUSTOMERS)) {
             if (customersDBData != null) {
                 while (customersDBData.next()) {
                     Customer customer = new Customer(customersDBData.getString("NAME"));
                     customer.setId(customersDBData.getInt("ID"));
-                    customer.setRentedCarId(customersDBData.getInt("RENTED_CAR_ID"));
+                    // these next two calls are necessary
+                    // because the method wasNull only works on the last get call on database ResultSet
+                    final int rentedCarId = customersDBData.getInt("RENTED_CAR_ID");
+                    if (customersDBData.wasNull()) {
+                        // Set the field to null if it was NULL in the database
+                        customer.setRentedCarId(null);
+                    } else {
+                        customer.setRentedCarId(rentedCarId);
+                    }
                     customers.put(customer.getId(), customer);
                 }
                 return customers;
