@@ -32,8 +32,7 @@ public class DbCarDao implements CarDao{
     @Override
     public void add(final Car car) {
         System.out.println(
-                dbOperations.insert(INSERT_CAR, car) == 1
-                        ? "The car was added!\n" : "Company not added.\n"
+                dbOperations.insert(INSERT_CAR, car) == 1 ? "The car was added!\n" : "Company not added.\n"
         );
     }
 

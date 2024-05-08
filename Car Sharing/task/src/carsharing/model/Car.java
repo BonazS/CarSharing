@@ -17,7 +17,7 @@ public class Car {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
@@ -25,7 +25,7 @@ public class Car {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -33,7 +33,7 @@ public class Car {
         return companyId;
     }
 
-    public void setCompanyId(int companyId) {
+    public void setCompanyId(final int companyId) {
         this.companyId = companyId;
     }
 
