@@ -4,6 +4,11 @@ import carsharing.jdbc.connection.JDBConnection;
 import carsharing.jdbc.crud.DBOperations;
 import carsharing.model.Customer;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.TreeMap;
+
 public class DbCustomerDao implements CustomerDao {
 
     private static final String CREATE_CUSTOMER = "CREATE TABLE IF NOT EXISTS CUSTOMER (" +
@@ -14,6 +19,8 @@ public class DbCustomerDao implements CustomerDao {
 
     private static final String INSERT_CUSTOMER = "INSERT INTO CUSTOMER (NAME, RENTED_CAR_ID) " +
             "VALUES(?, ?)";
+
+    private static final String SELECT_ALL_CUSTOMERS = "SELECT * FROM CUSTOMER";
 
     private final DBOperations dbOperations;
 
@@ -27,5 +34,26 @@ public class DbCustomerDao implements CustomerDao {
         System.out.println(
                 dbOperations.insert(INSERT_CUSTOMER, customer) == 1 ? "The customer was added!\n" : "Customer not added.\n"
         );
+    }
+
+    @Override
+    public Map<Integer, Customer> selectAllCustomers() {
+        // return Map.of();
+        Map<Integer, Customer> customers = new TreeMap<>();
+        try (ResultSet customersDBData = dbOperations.select(SELECT_ALL_CUSTOMERS)) {
+            if (customersDBData != null) {
+                while (customersDBData.next()) {
+                    Customer customer = new Customer(customersDBData.getString("NAME"));
+                    customer.setId(customersDBData.getInt("ID"));
+                    customer.setRentedCarId(customersDBData.getInt("RENTED_CAR_ID"));
+                    customers.put(customer.getId(), customer);
+                }
+                return customers;
+            }
+        } catch (SQLException e) {
+            System.out.println("Customers not obtained.");
+            throw new RuntimeException(e);
+        }
+        return customers;
     }
 }

@@ -29,6 +29,10 @@ public class Menu {
                     System.out.println();
                     LoginManager loginManager = new LoginManager(dbConnection, this);
                     loginManager.loginMenu(input);
+                } else if (optionMenu == 2) {
+                    System.out.println();
+                    LoginCustomer loginCustomer = new LoginCustomer(dbConnection, this);
+                    loginCustomer.loginMenu(input);
                 } else if (optionMenu == 3) {
                     CustomerDao customerDao = new DbCustomerDao(dbConnection);
                     // It's necessary because of the character of new line remained in the scanner after nextInt call.
