@@ -38,7 +38,8 @@ public class DbCarDao implements CarDao{
 
     @Override
     public Map<Integer, Car> selectCarsByCompanyId(final int companyId) {
-        Map<Integer, Car> companyCars = new TreeMap<>();
+        final Map<Integer, Car> companyCars = new TreeMap<>();
+        int key = 0;
         try (ResultSet companyCarsDBData = dbOperations.select(SELECT_ALL_COMPANY_CARS.formatted(companyId))) {
             if (companyCarsDBData != null) {
                 while (companyCarsDBData.next()) {
@@ -47,7 +48,8 @@ public class DbCarDao implements CarDao{
                             companyCarsDBData.getInt("COMPANY_ID")
                     );
                     car.setId(companyCarsDBData.getInt("ID"));
-                    companyCars.put(car.getId(), car);
+                    // companyCars.put(car.getId(), car);
+                    companyCars.put(++key, car);
                 }
                 return companyCars;
             }

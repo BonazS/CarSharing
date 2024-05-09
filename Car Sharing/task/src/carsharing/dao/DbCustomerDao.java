@@ -38,7 +38,8 @@ public class DbCustomerDao implements CustomerDao {
 
     @Override
     public Map<Integer, Customer> selectAllCustomers() {
-        Map<Integer, Customer> customers = new TreeMap<>();
+        final Map<Integer, Customer> customers = new TreeMap<>();
+        int key = 0;
         try (ResultSet customersDBData = dbOperations.select(SELECT_ALL_CUSTOMERS)) {
             if (customersDBData != null) {
                 while (customersDBData.next()) {
@@ -53,7 +54,8 @@ public class DbCustomerDao implements CustomerDao {
                     } else {
                         customer.setRentedCarId(rentedCarId);
                     }
-                    customers.put(customer.getId(), customer);
+                    // customers.put(customer.getId(), customer);
+                    customers.put(++key, customer);
                 }
                 return customers;
             }

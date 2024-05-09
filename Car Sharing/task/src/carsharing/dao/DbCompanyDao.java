@@ -38,14 +38,16 @@ public class DbCompanyDao implements CompanyDao {
 
     @Override
     public Map<Integer, Company> selectAllCompanies() {
-        Map<Integer, Company> companies = new TreeMap<>();
+        final Map<Integer, Company> companies = new TreeMap<>();
+        int key = 0;
         try (ResultSet companiesDBData = dbOperations.select(SELECT_ALL_COMPANIES)) {
             if (companiesDBData != null) {
                 while (companiesDBData.next()) {
                     int companyId = companiesDBData.getInt("ID");
                     Company company = new Company(companiesDBData.getString("NAME"));
                     company.setId(companyId);
-                    companies.put(companyId, company);
+                    // companies.put(companyId, company);
+                    companies.put(++key, company);
                 }
                 return companies;
             }

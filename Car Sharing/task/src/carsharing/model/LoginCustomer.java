@@ -1,7 +1,6 @@
 package carsharing.model;
 
-import carsharing.dao.CustomerDao;
-import carsharing.dao.DbCustomerDao;
+import carsharing.dao.*;
 import carsharing.jdbc.connection.JDBConnection;
 
 import java.util.Map;
@@ -11,10 +10,16 @@ public class LoginCustomer {
 
     private final CustomerDao customerDao;
 
+    private final CompanyDao companyDao;
+
+    private final CarDao carDao;
+
     private final Menu startingMenu;
 
     public LoginCustomer(final JDBConnection con, final Menu startingMenu) {
         customerDao = new DbCustomerDao(con);
+        companyDao = new DbCompanyDao(con);
+        carDao = new DbCarDao(con);
         this.startingMenu = startingMenu;
     }
 
@@ -23,9 +28,7 @@ public class LoginCustomer {
         if (!customers.isEmpty()) {
             while (true) {
                 System.out.println("Customer list:");
-                customers.forEach(
-                        (id, company) -> System.out.printf("%d. %s%n", id, company.getName())
-                );
+                customers.forEach((key, company) -> System.out.printf("%d. %s%n", key, company.getName()));
                 System.out.println("0. Back");
                 if (scanner.hasNextInt()) {
                     int optionMenu = scanner.nextInt();
@@ -55,16 +58,18 @@ public class LoginCustomer {
                     System.exit(0);
                 } else if (optionMenu == 1) {
                     /*
-                    final Map<Integer, Car> companyCars = carDao.selectCarsByCompanyId(company.getId());
-                    if (!companyCars.isEmpty()) {
-                        int indexList = 0;
-                        System.out.println("Car list:");
-                        for (Map.Entry<Integer, Car> car : companyCars.entrySet()) {
-                            System.out.printf("%d. %s%n", ++indexList, car.getValue().getName());
-                        }
+                    if (customer.getRentedCarId() != null) {
+                        System.out.println();
+                        System.out.println("You've already rented a car!");
                         System.out.println();
                     } else {
-                        System.out.println("The car list is empty!\n");
+                        final Map<Integer, Company> companies = companyDao.selectAllCompanies();
+                        if (!companies.isEmpty()) {
+                            companyListMenu(scanner, companies);
+                            System.out.println();
+                        } else {
+                            System.out.println("The company list is empty!\n");
+                        }
                     }
                      */
                 } else if (optionMenu == 2) {
@@ -87,6 +92,39 @@ public class LoginCustomer {
                     }
                 }
             }
+        }
+    }
+
+    private void companyListMenu(final Scanner scanner, Map<Integer, Company> companies) {
+        while (true) {
+            int indexList = 0;
+            System.out.println("Choose the company:");
+            for (Map.Entry<Integer, Company> company : companies.entrySet()) {
+                System.out.printf("%d. %s%n", ++indexList, company.getValue().getName());
+            }
+            System.out.println("0. Back");
+            if (scanner.hasNextInt()) {
+                int optionMenu = scanner.nextInt();
+                System.out.println();
+                if (optionMenu == 0) return;
+                else if (companies.containsKey(optionMenu)){
+                    // companyMenu(scanner, companies.get(optionMenu));
+                }
+            }
+        }
+    }
+
+    private void carListMenu(final Scanner scanner, final Company company) {
+        final Map<Integer, Car> companyCars = carDao.selectCarsByCompanyId(company.getId());
+        if (!companyCars.isEmpty()) {
+            int indexList = 0;
+            System.out.println("Car list:");
+            for (Map.Entry<Integer, Car> car : companyCars.entrySet()) {
+                System.out.printf("%d. %s%n", ++indexList, car.getValue().getName());
+            }
+            System.out.println();
+        } else {
+            System.out.printf("No available cars in the %s company\n", company.getName());
         }
     }
 }

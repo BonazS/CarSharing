@@ -57,9 +57,13 @@ public class LoginManager {
     private void companyListMenu(final Scanner scanner, Map<Integer, Company> companies) {
         while (true) {
             System.out.println("Choose the company:");
-            companies.forEach(
-                    (id, company) -> System.out.printf("%d. %s%n", id, company.getName())
-            );
+            // old run configuration
+            companies.forEach((key, company) -> System.out.printf("%d. %s%n", key, company.getName()));
+            /*
+            for (Map.Entry<Integer, Company> company : companies.entrySet()) {
+                System.out.printf("%d. %s%n", ++indexList, company.getValue().getName());
+            }
+             */
             System.out.println("0. Back");
             if (scanner.hasNextInt()) {
                 int optionMenu = scanner.nextInt();
@@ -70,7 +74,6 @@ public class LoginManager {
                 }
             }
         }
-
     }
 
     private void companyMenu(final Scanner scanner, final Company company) {
@@ -88,11 +91,13 @@ public class LoginManager {
                 } else if (optionMenu == 1) {
                     final Map<Integer, Car> companyCars = carDao.selectCarsByCompanyId(company.getId());
                     if (!companyCars.isEmpty()) {
-                        int indexList = 0;
                         System.out.println("Car list:");
+                        companyCars.forEach((key, car) -> System.out.printf("%d. %s%n", key, car.getName()));
+                        /*
                         for (Map.Entry<Integer, Car> car : companyCars.entrySet()) {
                             System.out.printf("%d. %s%n", ++indexList, car.getValue().getName());
                         }
+                         */
                         System.out.println();
                     } else {
                         System.out.println("The car list is empty!\n");
