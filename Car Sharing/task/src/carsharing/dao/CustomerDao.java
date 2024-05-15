@@ -14,4 +14,6 @@ public interface CustomerDao {
     Map<Integer, Customer> selectCustomersWithACarRented();
 
     void rentCar(final Customer customer, final Car car);
+
+    void returnRentedCar(final Customer customer);
 }

@@ -74,7 +74,8 @@ public class LoginCustomer {
                     // scanner.nextLine();
                     System.out.println();
                     if (customer.getRentedCarId() != null) {
-                        //carDao.add(new Car(scanner.nextLine(), company.getId()));
+                        customerDao.returnRentedCar(customer);
+                        customer.setRentedCarId(null);
                     } else {
                         System.out.println("You didn't rent a car!\n");
                     }

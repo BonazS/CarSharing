@@ -91,7 +91,6 @@ public class DbCustomerDao implements CustomerDao {
                     } else {
                         customer.setRentedCarId(rentedCarId);
                     }
-                    // customers.put(customer.getId(), customer);
                     customersWithACarRented.put(++key, customer);
                 }
                 return customersWithACarRented;
@@ -105,11 +104,24 @@ public class DbCustomerDao implements CustomerDao {
 
     @Override
     public void rentCar(Customer customer, Car car) {
+        final int numberDBRowsUpdated = dbOperations.update(UPDATE_CUSTOMER_RENTED_CAR, customer, car);
         System.out.printf(
-                dbOperations.update(UPDATE_CUSTOMER_RENTED_CAR, customer, car) == 1
-                        ? "You rented '%s'\n" : "Rented car not updated.\n"
-                , car.getName()
+                numberDBRowsUpdated == 1 ? "You rented '%s'\n" : "Rented car not updated.\n", car.getName()
         );
+        if (numberDBRowsUpdated == 1) {
+            customer.setRentedCarId(car.getId());
+        }
+    }
+
+    @Override
+    public void returnRentedCar(Customer customer) {
+        final int numberDBRowsUpdated = dbOperations.update(UPDATE_CUSTOMER_RENTED_CAR, customer, null);
+        System.out.println(
+                numberDBRowsUpdated == 1 ? "You've returned a rented car!\n" : "Rented car not returned.\n"
+        );
+        if (numberDBRowsUpdated == 1) {
+            customer.setRentedCarId(null);
+        }
     }
 
 
