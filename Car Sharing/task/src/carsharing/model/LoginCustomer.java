@@ -3,8 +3,7 @@ package carsharing.model;
 import carsharing.dao.*;
 import carsharing.jdbc.connection.JDBConnection;
 
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class LoginCustomer {
 
@@ -57,7 +56,6 @@ public class LoginCustomer {
                     startingMenu.mainMenu();
                     System.exit(0);
                 } else if (optionMenu == 1) {
-                    /*
                     if (customer.getRentedCarId() != null) {
                         System.out.println();
                         System.out.println("You've already rented a car!");
@@ -65,13 +63,12 @@ public class LoginCustomer {
                     } else {
                         final Map<Integer, Company> companies = companyDao.selectAllCompanies();
                         if (!companies.isEmpty()) {
-                            companyListMenu(scanner, companies);
+                            companyListMenu(scanner, companies, customer);
                             System.out.println();
                         } else {
                             System.out.println("The company list is empty!\n");
                         }
                     }
-                     */
                 } else if (optionMenu == 2) {
                     // It's necessary because of the character of new line remained in the scanner after nextInt call.
                     // scanner.nextLine();
@@ -95,34 +92,61 @@ public class LoginCustomer {
         }
     }
 
-    private void companyListMenu(final Scanner scanner, Map<Integer, Company> companies) {
+    private void companyListMenu(final Scanner scanner, final Map<Integer, Company> companies, final Customer customer) {
         while (true) {
-            int indexList = 0;
-            System.out.println("Choose the company:");
-            for (Map.Entry<Integer, Company> company : companies.entrySet()) {
-                System.out.printf("%d. %s%n", ++indexList, company.getValue().getName());
-            }
+            System.out.println("Choose a company:");
+            companies.forEach((key, company) -> System.out.printf("%d. %s%n", key, company.getName()));
             System.out.println("0. Back");
             if (scanner.hasNextInt()) {
                 int optionMenu = scanner.nextInt();
                 System.out.println();
                 if (optionMenu == 0) return;
                 else if (companies.containsKey(optionMenu)){
-                    // companyMenu(scanner, companies.get(optionMenu));
+                    carListMenu(scanner, companies.get(optionMenu), customer);
                 }
             }
         }
     }
 
-    private void carListMenu(final Scanner scanner, final Company company) {
+    private void carListMenu(final Scanner scanner, final Company company, final Customer customer) {
         final Map<Integer, Car> companyCars = carDao.selectCarsByCompanyId(company.getId());
+        final Map<Integer, Customer> customersWithACarRented = customerDao.selectCustomersWithACarRented();
         if (!companyCars.isEmpty()) {
-            int indexList = 0;
-            System.out.println("Car list:");
-            for (Map.Entry<Integer, Car> car : companyCars.entrySet()) {
-                System.out.printf("%d. %s%n", ++indexList, car.getValue().getName());
+            final Set<Integer> keysOfCarsToRemove = new HashSet<>();
+            for (Map.Entry<Integer, Car> companyCar : companyCars.entrySet()) {
+                for (Map.Entry<Integer, Customer> customerWithACarRented : customersWithACarRented.entrySet()) {
+                    if (customerWithACarRented.getValue().getRentedCarId() == companyCar.getValue().getId()) {
+                        keysOfCarsToRemove.add(companyCar.getKey());
+                    }
+                }
             }
-            System.out.println();
+            for (Integer key : keysOfCarsToRemove) {
+                companyCars.remove(key);
+            }
+            final Map<Integer, Car> availableCars = new TreeMap<>();
+            int key = 0;
+            for (Car car : companyCars.values()) {
+                availableCars.put(++key, car);
+            }
+            if (!companyCars.isEmpty()) {
+                while (true) {
+                    System.out.println("Choose a car:");
+                    availableCars.forEach((k, car) -> System.out.printf("%d. %s%n", k, car.getName()));
+                    System.out.println("0. Back");
+                    if (scanner.hasNextInt()) {
+                        int optionMenu = scanner.nextInt();
+                        System.out.println();
+                        if (optionMenu == 0) {
+                            customerMenu(scanner, customer);
+                        } else if (availableCars.containsKey(optionMenu)){
+                            customerDao.rentCar(customer, availableCars.get(optionMenu));
+                            customerMenu(scanner, customer);
+                        }
+                    }
+                }
+            } else {
+                System.out.printf("No available cars in the %s company\n", company.getName());
+            }
         } else {
             System.out.printf("No available cars in the %s company\n", company.getName());
         }

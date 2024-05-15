@@ -64,6 +64,21 @@ public class DBOperations {
         }
     }
 
+    public int update(final String query, final Customer customer, final Car car) {
+        try (PreparedStatement stmt = con.getConnection().prepareStatement(query)) {
+            if (customer.getRentedCarId() == null) {
+                stmt.setInt(1, car.getId());
+            } else {
+                stmt.setNull(1, Types.INTEGER);
+            }
+            stmt.setInt(2, customer.getId());
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Update Statement not created.");
+            throw new RuntimeException(e);
+        }
+    }
+
     public ResultSet select(final String query) {
         final ResultSet h2DBResultSet;
         try {
