@@ -22,6 +22,8 @@ public class DbCarDao implements CarDao{
 
     private static final String SELECT_ALL_COMPANY_CARS = "SELECT * FROM CAR WHERE COMPANY_ID = %d";
 
+    private static final String SELECT_CAR_BY_ID = "SELECT * FROM CAR WHERE ID = %d";
+
     private final DBOperations dbOperations;
 
     public DbCarDao(final JDBConnection con) {
@@ -37,6 +39,23 @@ public class DbCarDao implements CarDao{
     }
 
     @Override
+    public Car selectCarById(final int id) {
+        Car car = null;
+        try (ResultSet carDBData = dbOperations.select(SELECT_CAR_BY_ID.formatted(id))) {
+            if (carDBData != null) {
+                while (carDBData.next()) {
+                    car = new Car(carDBData.getString("NAME"), carDBData.getInt("COMPANY_ID"));
+                    car.setId(carDBData.getInt("ID"));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Car not obtained.");
+            throw new RuntimeException(e);
+        }
+        return car;
+    }
+
+    @Override
     public Map<Integer, Car> selectCarsByCompanyId(final int companyId) {
         final Map<Integer, Car> companyCars = new TreeMap<>();
         int key = 0;
@@ -48,13 +67,12 @@ public class DbCarDao implements CarDao{
                             companyCarsDBData.getInt("COMPANY_ID")
                     );
                     car.setId(companyCarsDBData.getInt("ID"));
-                    // companyCars.put(car.getId(), car);
                     companyCars.put(++key, car);
                 }
                 return companyCars;
             }
         } catch (SQLException e) {
-            System.out.println("Companies not obtained.");
+            System.out.println("Cars not obtained.");
             throw new RuntimeException(e);
         }
         return companyCars;

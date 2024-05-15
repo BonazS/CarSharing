@@ -57,7 +57,6 @@ public class LoginCustomer {
                     System.exit(0);
                 } else if (optionMenu == 1) {
                     if (customer.getRentedCarId() != null) {
-                        System.out.println();
                         System.out.println("You've already rented a car!");
                         System.out.println();
                     } else {
@@ -71,8 +70,7 @@ public class LoginCustomer {
                     }
                 } else if (optionMenu == 2) {
                     // It's necessary because of the character of new line remained in the scanner after nextInt call.
-                    // scanner.nextLine();
-                    System.out.println();
+                    scanner.nextLine();
                     if (customer.getRentedCarId() != null) {
                         customerDao.returnRentedCar(customer);
                         customer.setRentedCarId(null);
@@ -81,10 +79,15 @@ public class LoginCustomer {
                     }
                 } else if (optionMenu == 3) {
                     // It's necessary because of the character of new line remained in the scanner after nextInt call.
-                    // scanner.nextLine();
-                    System.out.println();
+                    scanner.nextLine();
                     if (customer.getRentedCarId() != null) {
-                        //carDao.add(new Car(scanner.nextLine(), company.getId()));
+                        Car customerCar = carDao.selectCarById(customer.getRentedCarId());
+                        Company companyCar = companyDao.selectCompanyById(customerCar.getCompanyId());
+                        System.out.println("Your rented car:");
+                        System.out.println(customerCar.getName());
+                        System.out.println("Company:");
+                        System.out.println(companyCar.getName());
+                        System.out.println();
                     } else {
                         System.out.println("You didn't rent a car!\n");
                     }

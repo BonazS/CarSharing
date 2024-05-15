@@ -10,4 +10,6 @@ public interface CompanyDao {
 
     Map<Integer, Company> selectAllCompanies();
 
+    Company selectCompanyById(final int id);
+
 }

@@ -1,5 +1,8 @@
 package carsharing;
 
+import carsharing.dao.DbCarDao;
+import carsharing.dao.DbCompanyDao;
+import carsharing.dao.DbCustomerDao;
 import carsharing.jdbc.connection.JDBConnection;
 import carsharing.model.Menu;
 
@@ -24,7 +27,16 @@ public class Main {
             H2DBConnection = new JDBConnection(Optional.empty());
         }
 
+        // Create DB's structure of application
+        initializeDatabase(H2DBConnection);
+
         Menu menu = new Menu(H2DBConnection);
         menu.mainMenu();
+    }
+
+    private static void initializeDatabase(JDBConnection dbConnection) {
+        new DbCompanyDao(dbConnection);
+        new DbCarDao(dbConnection);
+        new DbCustomerDao(dbConnection);
     }
 }

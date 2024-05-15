@@ -21,6 +21,8 @@ public class DbCompanyDao implements CompanyDao {
 
     private static final String SELECT_ALL_COMPANIES = "SELECT * FROM COMPANY";
 
+    private static final String SELECT_COMPANY_BY_ID = "SELECT * FROM COMPANY WHERE ID = %d";
+
     private final DBOperations dbOperations;
 
     public DbCompanyDao(final JDBConnection con) {
@@ -46,7 +48,6 @@ public class DbCompanyDao implements CompanyDao {
                     int companyId = companiesDBData.getInt("ID");
                     Company company = new Company(companiesDBData.getString("NAME"));
                     company.setId(companyId);
-                    // companies.put(companyId, company);
                     companies.put(++key, company);
                 }
                 return companies;
@@ -56,5 +57,22 @@ public class DbCompanyDao implements CompanyDao {
             throw new RuntimeException(e);
         }
         return companies;
+    }
+
+    @Override
+    public Company selectCompanyById(final int id) {
+        Company company = null;
+        try (ResultSet companyDBData = dbOperations.select(SELECT_COMPANY_BY_ID.formatted(id))) {
+            if (companyDBData != null) {
+                while (companyDBData.next()) {
+                    company = new Company(companyDBData.getString("NAME"));
+                    company.setId(companyDBData.getInt("ID"));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Company not obtained.");
+            throw new RuntimeException(e);
+        }
+        return company;
     }
 }

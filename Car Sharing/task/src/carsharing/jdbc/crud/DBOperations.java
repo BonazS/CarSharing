@@ -93,5 +93,4 @@ public class DBOperations {
         }
         return h2DBResultSet;
     }
-
 }

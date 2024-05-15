@@ -26,7 +26,7 @@ public class DbCustomerDao implements CustomerDao {
     private static final String SELECT_CUSTOMERS_WITH_A_CAR_RENTED = "SELECT * FROM CUSTOMER " +
             "WHERE RENTED_CAR_ID IS NOT NULL";
 
-    private static final String UPDATE_CUSTOMER_RENTED_CAR = "UPDATE CUSTOMER SET RENTED_CAR_ID = ?" +
+    private static final String UPDATE_CUSTOMER_RENTED_CAR = "UPDATE CUSTOMER SET RENTED_CAR_ID = ? " +
             "WHERE ID = ?";
 
     private final DBOperations dbOperations;
@@ -61,7 +61,6 @@ public class DbCustomerDao implements CustomerDao {
                     } else {
                         customer.setRentedCarId(rentedCarId);
                     }
-                    // customers.put(customer.getId(), customer);
                     customers.put(++key, customer);
                 }
                 return customers;
@@ -103,18 +102,19 @@ public class DbCustomerDao implements CustomerDao {
     }
 
     @Override
-    public void rentCar(Customer customer, Car car) {
+    public void rentCar(final Customer customer, final Car car) {
         final int numberDBRowsUpdated = dbOperations.update(UPDATE_CUSTOMER_RENTED_CAR, customer, car);
         System.out.printf(
                 numberDBRowsUpdated == 1 ? "You rented '%s'\n" : "Rented car not updated.\n", car.getName()
         );
+        System.out.println();
         if (numberDBRowsUpdated == 1) {
             customer.setRentedCarId(car.getId());
         }
     }
 
     @Override
-    public void returnRentedCar(Customer customer) {
+    public void returnRentedCar(final Customer customer) {
         final int numberDBRowsUpdated = dbOperations.update(UPDATE_CUSTOMER_RENTED_CAR, customer, null);
         System.out.println(
                 numberDBRowsUpdated == 1 ? "You've returned a rented car!\n" : "Rented car not returned.\n"
@@ -123,6 +123,5 @@ public class DbCustomerDao implements CustomerDao {
             customer.setRentedCarId(null);
         }
     }
-
 
 }

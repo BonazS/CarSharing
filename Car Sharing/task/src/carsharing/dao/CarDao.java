@@ -8,5 +8,7 @@ public interface CarDao {
 
     void add(final Car car);
 
+    Car selectCarById(final int id);
+
     Map<Integer, Car> selectCarsByCompanyId(final int companyId);
 }
